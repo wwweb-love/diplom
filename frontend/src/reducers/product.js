@@ -1,6 +1,6 @@
 const initialStateProduct = {
     listProducts: [],
-    selectedProduct: null,
+    listCategories: []
 }
 
 export const product = (state = initialStateProduct, action) => {
@@ -10,6 +10,13 @@ export const product = (state = initialStateProduct, action) => {
             return {
                 ...state,
                 listProducts: action.payload
+            }
+        }
+
+        case "CREATE_CATEGORIES": {
+            return {
+                ...state,
+                listCategories: action.payload
             }
         }
 

@@ -2,8 +2,10 @@ import './App.css'
 import { Basket, Products, Product, Login, Registration, Admin } from './pages'
 import { Routes, Route } from "react-router-dom"
 import { Header } from './components'
+
 function App() {
   return (
+    <>
     <div className='app'>
       <Header />
       <Routes>
@@ -15,6 +17,7 @@ function App() {
         <Route path='/admin' element={<Admin />} />
       </Routes>
     </div>
+    </>
   )
 }
 

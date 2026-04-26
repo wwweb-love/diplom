@@ -1,16 +1,23 @@
 import styled from "styled-components"
 import { Search, SectionSorted, SectionCategory, ProductCard } from "../../components"
 import { getProducts } from "../../api"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { actionProducts } from "../../actions"
 import { selectorProducts } from "../../selectors"
+import { Loader } from "../../components"
 
 const ProductsContainer = ({ className }) => {
     const dispatch = useDispatch()
+    const [isLoadingProducts, setIsLoadingProducts] = useState(true)
 
     useEffect(() => {
-        getProducts().then((loaded) => dispatch(actionProducts(loaded)))
+        setIsLoadingProducts(true)
+
+        getProducts().then((loaded) => {
+            dispatch(actionProducts(loaded))
+            setIsLoadingProducts(false)
+        })
     }, [])
 
     const products = useSelector(selectorProducts)
@@ -22,9 +29,9 @@ const ProductsContainer = ({ className }) => {
                 <SectionCategory />
                 <div className="block-sorted-products">
                     <SectionSorted />
-                    <div className="block-products">
+                    {isLoadingProducts ? <Loader /> : <div className="block-products">
                         {products.map(product => <ProductCard key={product.id} imageUrl={product.imageUrl} title={product.title} id={product.id} price={product.price} />)}
-                    </div>
+                    </div>}
                 </div>
             </div>
         </div>
@@ -37,6 +44,7 @@ export const Products = styled(ProductsContainer)`
     display: flex;
     flex-direction: column;
     gap: 20px;
+    position: relative;
 
     .block-category-products {
         display: flex;
