@@ -1,6 +1,8 @@
 const initialStateProduct = {
     listProducts: [],
-    listCategories: []
+    listCategories: [],
+    selectedProduct: {},
+    basket: {}
 }
 
 export const product = (state = initialStateProduct, action) => {
@@ -13,10 +15,24 @@ export const product = (state = initialStateProduct, action) => {
             }
         }
 
+        case "CREATE_PRODUCT": {
+            return {
+                ...state,
+                selectedProduct: action.payload
+            }
+        }
+
         case "CREATE_CATEGORIES": {
             return {
                 ...state,
                 listCategories: action.payload
+            }
+        }
+
+        case "CREATE_BASKET": {
+            return {
+                ...state,
+                basket: action.payload
             }
         }
 

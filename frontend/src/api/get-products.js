@@ -1,3 +1,3 @@
 export const getProducts = () => (
-    fetch("http://localhost:3033/products").then(loaded => loaded.json())
+    fetch("http://localhost:3000/api/products").then(loaded => loaded.json())
 )

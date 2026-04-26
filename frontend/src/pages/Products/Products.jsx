@@ -30,7 +30,7 @@ const ProductsContainer = ({ className }) => {
                 <div className="block-sorted-products">
                     <SectionSorted />
                     {isLoadingProducts ? <Loader /> : <div className="block-products">
-                        {products.map(product => <ProductCard key={product.id} imageUrl={product.imageUrl} title={product.title} id={product.id} price={product.price} />)}
+                        {products.map(product => <ProductCard key={product._id} product={product} />)}
                     </div>}
                 </div>
             </div>

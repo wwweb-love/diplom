@@ -10,8 +10,8 @@ function App() {
       <Header />
       <Routes>
         <Route path='/' element={<Products />} />
-        <Route path='/product/:id' element={<Product />} />
-        <Route path='/basket' element={<Basket />} />
+        <Route path='/product/:category/:id' element={<Product />} />
+        <Route path='/basket/:id' element={<Basket />} />
         <Route path='/login' element={<Login />} />
         <Route path='/registration' element={<Registration />} />
         <Route path='/admin' element={<Admin />} />

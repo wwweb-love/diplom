@@ -18,9 +18,9 @@ const LoaderContainer = ({ className }) => {
 
 export const Loader = styled(LoaderContainer)`
         position: absolute;
-        top: 40%;
-        left: 40%;
-        transform: translate(-40%, -40%);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         width: 50px;
         height: 50px;
         border: 6px solid black;
