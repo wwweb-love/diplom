@@ -3,22 +3,57 @@ import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
 import { useNavigate } from "react-router"
+import { ErrorMessage } from "../ErrorMessage/ErrorMessage"
+
+const AuthRegisterSchema = yup.object().shape({
+    login: yup
+        .string()
+        .required("Заполните логин")
+        .matches(/^\w+$/, "Неверный логин. Допускаются буквы и цифры")
+        .min(3, "Неверный логин. Допускается минимум 3 символа")
+        .max(20, "Неверный логин. Допускается максимум 20 символов"),
+    password: yup
+        .string()
+        .required("Заполните пароль")
+        .matches(/^\w+$/, "Неверный пароль. Допускаются буквы и цифры")
+        .min(3, "Неверный пароль. Допускается минимум 3 символа")
+        .max(20, "Неверный пароль. Допускается максимум 20 символов")
+})
 
 const AuthRegisterContainer = ({ className, formTitle, btnTitle, pageToOtherForm, linkTitle }) => {
     const navigate = useNavigate()
-    
+
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors }
+    } = useForm({
+        defaultValues: {
+            login: "",
+            password: ""
+        },
+        resolver: yupResolver(AuthRegisterSchema)
+    })
+
+    const onSubmit = (data) => {
+        console.log("Fetch on server:", data)
+    }
+
     return (
         <div className={className}>
-            <form className="form-login">
+            <form className="form-login" onSubmit={handleSubmit(onSubmit)}>
                 <p className="form-title">{formTitle}</p>
                 <div className="block-label-inp">
                     <label>Login</label>
-                    <input type="text" />
+                    <input type="text" {...register("login")} />
+                    {errors.login && <ErrorMessage errorMessage={errors.login.message} />}
                 </div>
 
                 <div className="block-label-inp">
                     <label>Password</label>
-                    <input type="password" />
+                    <input type="password" {...register("password")} />
+                    {errors.password && <ErrorMessage errorMessage={errors.password.message} />}
                 </div>
 
                 <div className="block-action">
