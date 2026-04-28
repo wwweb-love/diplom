@@ -5,6 +5,7 @@ const cors = require('cors')
 
 const { getProducts, getProduct, addProduct } = require("./controllers/Product")
 const { getBasket, addBasket } = require("./controllers/Basket")
+const { getCategories } = require("./controllers/Category")
 
 const port = 3000
 
@@ -24,28 +25,35 @@ server.get("/api/products", async (req, res) => {
     res.json(products)
 })
 
+
 server.get("/api/product/:category/:id", async (req, res) => {
     const product = await getProduct(req, res)
-
+    
     res.json(product)
 })
 
 server.post("/product", async (req, res) => {
     const product = await addProduct(req, res)
-
+    
     res.json(product)
+})
+
+server.get("/categories", async (req, res) => {
+    const categories = await getCategories(req, res)
+    
+    res.json(categories)
 })
 
 server.get("/api/basket/:userId", async (req, res) => {
     const basket = await getBasket(req, res)
-
+    
     res.json(basket)
-
+    
 })
 
 server.post("/basket", async (req, res) => {
     const basket = await addBasket(req, res)
-
+    
     res.json(basket)
 })
 
