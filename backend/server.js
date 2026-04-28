@@ -20,42 +20,84 @@ server.use(express.json())
 
 
 server.get("/api/products", async (req, res) => {
-    const products = await getProducts(req, res)
+    try {
 
-    res.json(products)
+        const products = await getProducts(req, res)
+    
+        res.send({ error: null, data: products })
+
+    } catch(e) {
+        res.send({ error: e.message || "Unknown error", data: null })
+    }
 })
 
 
 server.get("/api/product/:category/:id", async (req, res) => {
-    const product = await getProduct(req, res)
-    
-    res.json(product)
+    try{
+
+        const product = await getProduct(req, res)
+        
+        res.send({ error: null, data: product })
+
+    } catch(e) {
+        res.send({ error: e.message || "Unknown error", data: null  })
+    }
 })
 
 server.post("/product", async (req, res) => {
-    const product = await addProduct(req, res)
-    
-    res.json(product)
+    try{
+        
+        const product = await addProduct(req, res)
+        
+        res.send({ error: null, data: product })
+
+    } catch(e) {
+        res.send({ error: e.message || "Unknown error", data: null  })
+    }
 })
 
 server.get("/categories", async (req, res) => {
-    const categories = await getCategories(req, res)
-    
-    res.json(categories)
+    try{
+
+        const categories = await getCategories(req, res)
+        
+        res.send({ error: null, data: categories })
+
+    } catch(e) {
+        res.send({ error: e.message || "Unknown error", data: null  })
+    }
 })
 
 server.get("/api/basket/:userId", async (req, res) => {
-    const basket = await getBasket(req, res)
-    
-    res.json(basket)
+
+    try{
+
+        const basket = await getBasket(req, res)
+        
+        res.send({ error: null, data: basket })
+        
+    } catch(e) {
+        res.send({ error: e.message || "Unknown error", data: null  })
+    }
     
 })
 
 server.post("/basket", async (req, res) => {
-    const basket = await addBasket(req, res)
+    try {
+
+        const basket = await addBasket(req, res)
+        
+        res.send({ error: null, data: basket })
+
+
+    } catch(e) {
+        res.send({ error: e.message || "Unknown error", data: null  })
+    }
     
-    res.json(basket)
 })
+
+
+// try {} catch(e) {res.send({ error: e.message || "Unknown error" })}
 
 mongoose.connect("mongodb://user:mongopass@localhost:27017/").then(
     () => {
