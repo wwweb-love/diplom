@@ -1,8 +1,8 @@
 import styled from "styled-components"
 
-const ButtonPanelContainer = ({ className, icon, children }) => {
+const ButtonPanelContainer = ({ className, icon, children, onClick }) => {
     return (
-        <button className={className}>
+        <button className={className} onClick={onClick}>
             {icon}
             {children}
         </button>

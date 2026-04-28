@@ -1,11 +1,14 @@
 import styled from "styled-components"
 import { Logo } from "../Logo/Logo"
 import { Panel } from "../Panel/Panel"
+import { useNavigate } from "react-router"
 
 const HeaderContainer = ({ className }) => {
+    const navigate = useNavigate()
+
     return (
         <div className={className}>
-            <Logo />
+            <Logo onClick={() => navigate("/")} />            
             <Panel />
         </div>
     )

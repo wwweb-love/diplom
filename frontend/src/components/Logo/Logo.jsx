@@ -1,9 +1,9 @@
 import styled from "styled-components"
 import LogoSVG from "../../assets/svg/logo.svg?react"
 
-const LogoContainer = ({ className }) => {
+const LogoContainer = ({ className, onClick }) => {
     return (
-        <div className={className}>
+        <div className={className} onClick={onClick}>
             <LogoSVG />
         </div>
     )
