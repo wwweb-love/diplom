@@ -2,7 +2,8 @@ const initialStateProduct = {
     listProducts: [],
     listCategories: [],
     selectedProduct: {},
-    basket: {}
+    basket: {},
+    globalError: ""
 }
 
 export const product = (state = initialStateProduct, action) => {
@@ -33,6 +34,13 @@ export const product = (state = initialStateProduct, action) => {
             return {
                 ...state,
                 basket: action.payload
+            }
+        }
+
+        case "SET_GLOBAL_ERROR": {
+            return {
+                ...state,
+                globalError: action.payload
             }
         }
 

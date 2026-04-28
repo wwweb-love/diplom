@@ -3,19 +3,30 @@ import { Search, SectionSorted, SectionCategory, ProductCard } from "../../compo
 import { getProducts } from "../../api"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { actionProducts } from "../../actions"
-import { selectorProducts } from "../../selectors"
+import { actionGlobalError, actionProducts } from "../../actions"
+import { selectorGlobalError, selectorProducts } from "../../selectors"
 import { Loader } from "../../components"
+import { useNavigate } from "react-router"
 
 const ProductsContainer = ({ className }) => {
+    const navigate = useNavigate()
     const dispatch = useDispatch()
     const [isLoadingProducts, setIsLoadingProducts] = useState(true)
+    const globalError = useSelector(selectorGlobalError)
 
     useEffect(() => {
         setIsLoadingProducts(true)
 
         getProducts().then((loaded) => {
-            dispatch(actionProducts(loaded))
+
+            const { data, error } = loaded
+
+            if (error) {
+                dispatch(actionGlobalError(error))
+                navigate("/errors")
+            }
+
+            dispatch(actionProducts(data))
             setIsLoadingProducts(false)
         })
     }, [])
@@ -24,16 +35,19 @@ const ProductsContainer = ({ className }) => {
 
     return (
         <div className={className}>
-            <Search />
-            <div className="block-category-products">
-                <SectionCategory />
-                <div className="block-sorted-products">
-                    <SectionSorted />
-                    {isLoadingProducts ? <Loader /> : <div className="block-products">
-                        {products.map(product => <ProductCard key={product._id} product={product} />)}
-                    </div>}
+            {!globalError && <>
+                <Search />
+                <div className="block-category-products">
+                    <SectionCategory />
+                    <div className="block-sorted-products">
+                        <SectionSorted />
+                        {isLoadingProducts ? <Loader /> : <div className="block-products">
+                            {products.map(product => <ProductCard key={product._id} product={product} />)}
+                        </div>}
+                    </div>
                 </div>
-            </div>
+            </>}
+
         </div>
     )
 }

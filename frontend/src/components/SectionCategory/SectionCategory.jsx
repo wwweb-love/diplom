@@ -2,20 +2,30 @@ import styled from "styled-components"
 import { CategoryCard } from "../CategoryCard/CategoryCard"
 import { useEffect, useState } from "react"
 import { getCategories } from "../../api"
-import { actionCategories } from "../../actions"
+import { actionCategories, actionGlobalError } from "../../actions"
 import { Loader } from "../../components"
 import { useSelector, useDispatch } from "react-redux"
 import { selectorCategories } from "../../selectors"
+import { useNavigate } from "react-router"
 
 const SectionCategoryContainer = ({ className }) => {
+    const navigate = useNavigate()
     const dispatch = useDispatch()
     const [isLoadingCategories, setIsLoadingCategories] = useState(true)
 
     useEffect(() => {
         setIsLoadingCategories(true)
 
-        getCategories().then((laoded) => {
-            dispatch(actionCategories(laoded))
+        getCategories().then((loaded) => {
+
+            const { data, error } = loaded
+
+            if (error) {
+                dispatch(actionGlobalError(error))
+                navigate("/errors")
+            }
+
+            dispatch(actionCategories(data))
             setIsLoadingCategories(false)
         })
 

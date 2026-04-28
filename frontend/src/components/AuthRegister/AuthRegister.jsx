@@ -45,13 +45,13 @@ const AuthRegisterContainer = ({ className, formTitle, btnTitle, pageToOtherForm
             <form className="form-login" onSubmit={handleSubmit(onSubmit)}>
                 <p className="form-title">{formTitle}</p>
                 <div className="block-label-inp">
-                    <label>Login</label>
+                    <label>Логин</label>
                     <input type="text" {...register("login")} />
                     {errors.login && <ErrorMessage errorMessage={errors.login.message} />}
                 </div>
 
                 <div className="block-label-inp">
-                    <label>Password</label>
+                    <label>Пароль</label>
                     <input type="password" {...register("password")} />
                     {errors.password && <ErrorMessage errorMessage={errors.password.message} />}
                 </div>
