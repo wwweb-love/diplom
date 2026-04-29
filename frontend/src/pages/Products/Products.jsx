@@ -12,7 +12,7 @@ const ProductsContainer = ({ className }) => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const [isLoadingProducts, setIsLoadingProducts] = useState(true)
-
+    
     useEffect(() => {
         setIsLoadingProducts(true)
 

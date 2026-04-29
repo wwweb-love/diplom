@@ -1,0 +1,1 @@
+export const selectorUser = (state) => state.product.user

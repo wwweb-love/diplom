@@ -4,12 +4,17 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
 import { useNavigate, useLocation } from "react-router"
 import { ErrorMessage } from "../ErrorMessage/ErrorMessage"
-
+import { postAuth, postRegistr } from "../../api"
+import { useDispatch } from "react-redux"
+import { actionGlobalError, actionUser } from "../../actions"
+import { useState } from "react"
 
 
 const AuthRegisterContainer = ({ className, htmlInfo, formHook }) => {
     const navigate = useNavigate()
     const location = useLocation();
+    const dispatch = useDispatch()
+    const [isLoading, setIsLoading] = useState(false)
 
     const { formTitle, btnTitle, pageToOtherForm, linkTitle } = htmlInfo
 
@@ -19,9 +24,38 @@ const AuthRegisterContainer = ({ className, htmlInfo, formHook }) => {
         formState: { errors }
     } = formHook
 
-    const onSubmit = (data) => {
-        console.log("Fetch on server:")
-        console.log("Fetch on server:", data)
+    const onSubmit = async (data) => {
+        setIsLoading(true)
+        if (location.pathname == "/registration") {
+            await postRegistr(data).then(loaded => {
+                const { error, data } = loaded
+                if (error) {
+                    dispatch(actionGlobalError(error))
+                    setIsLoading(false)
+                    navigate("/errors")
+                } else {
+                    dispatch(actionUser(data))
+                    setIsLoading(false)
+                    sessionStorage.setItem("user", JSON.stringify(data))
+                    navigate('/')
+                }
+            })
+        } else {
+            await postAuth(data).then(loaded => {
+                const { error, data } = loaded
+                if (error) {
+                    dispatch(actionGlobalError(error))
+                    setIsLoading(false)
+                    navigate("/errors")
+                } else {
+                    dispatch(actionUser(data))
+                    sessionStorage.setItem("user", JSON.stringify(data))
+                    setIsLoading(false)
+                    navigate("/") 
+                }
+            })
+        }
+
     }
 
     return (

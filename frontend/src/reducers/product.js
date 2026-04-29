@@ -3,7 +3,8 @@ const initialStateProduct = {
     listCategories: [],
     selectedProduct: {},
     basket: {},
-    globalError: ""
+    globalError: "",
+    user: null
 }
 
 export const product = (state = initialStateProduct, action) => {
@@ -41,6 +42,13 @@ export const product = (state = initialStateProduct, action) => {
             return {
                 ...state,
                 globalError: action.payload
+            }
+        }
+
+        case "SET_USER": {
+            return {
+                ...state,
+                user: action.payload
             }
         }
 
