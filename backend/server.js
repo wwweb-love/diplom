@@ -2,7 +2,10 @@ const express = require("express")
 const mongoose = require("mongoose")
 const path = require('path')
 const cors = require('cors')
+const cookieParser = require("cookie-parser")
 
+
+const { register, login } = require("./controllers/User")
 const { getProducts, getProduct, addProduct } = require("./controllers/Product")
 const { getBasket, addBasket } = require("./controllers/Basket")
 const { getCategories } = require("./controllers/Category")
@@ -15,9 +18,42 @@ server.use(cors({
     origin: 'http://localhost:5173',
     credentials: true
 }));
-
+server.use(cookieParser())
 server.use(express.json())
 
+
+server.post("/register", async (req, res) => {
+    try {
+        const { token, user } = await register(req, res)
+        
+        res.cookie("token", token, { httpOnly: true })
+        .send({error: null, data: user})
+    } catch(e) {
+        res.send({error: e.message, data: null})
+    }
+})
+
+server.post("/login", async (req, res) => {
+    try {
+        const { token, user } = await login(req, res)
+
+        res.cookie("token", token, { httpOnly: true })
+            .send({error: null, data: user})
+
+    } catch(e) {
+        res.send({error: e.message, data: null})
+    }
+})
+
+
+server.post("/logout", (req, res) => {
+    try {
+        res.cookie("token", "", { httpOnly: true })
+        .send({error: null, data: null})
+    } catch (e) {
+        res.send({error: e.message, data: null})
+    }
+})
 
 server.get("/api/products", async (req, res) => {
     try {
