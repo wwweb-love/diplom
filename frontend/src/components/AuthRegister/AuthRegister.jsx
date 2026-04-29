@@ -2,41 +2,25 @@ import styled from "styled-components"
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
-import { useNavigate } from "react-router"
+import { useNavigate, useLocation } from "react-router"
 import { ErrorMessage } from "../ErrorMessage/ErrorMessage"
 
-const AuthRegisterSchema = yup.object().shape({
-    login: yup
-        .string()
-        .required("Заполните логин")
-        .matches(/^\w+$/, "Неверный логин. Допускаются буквы и цифры")
-        .min(3, "Неверный логин. Допускается минимум 3 символа")
-        .max(20, "Неверный логин. Допускается максимум 20 символов"),
-    password: yup
-        .string()
-        .required("Заполните пароль")
-        .matches(/^\w+$/, "Неверный пароль. Допускаются буквы и цифры")
-        .min(3, "Неверный пароль. Допускается минимум 3 символа")
-        .max(20, "Неверный пароль. Допускается максимум 20 символов")
-})
 
-const AuthRegisterContainer = ({ className, formTitle, btnTitle, pageToOtherForm, linkTitle }) => {
+
+const AuthRegisterContainer = ({ className, htmlInfo, formHook }) => {
     const navigate = useNavigate()
+    const location = useLocation();
 
+    const { formTitle, btnTitle, pageToOtherForm, linkTitle } = htmlInfo
 
     const {
         register,
         handleSubmit,
         formState: { errors }
-    } = useForm({
-        defaultValues: {
-            login: "",
-            password: ""
-        },
-        resolver: yupResolver(AuthRegisterSchema)
-    })
+    } = formHook
 
     const onSubmit = (data) => {
+        console.log("Fetch on server:")
         console.log("Fetch on server:", data)
     }
 
@@ -44,6 +28,14 @@ const AuthRegisterContainer = ({ className, formTitle, btnTitle, pageToOtherForm
         <div className={className}>
             <form className="form-login" onSubmit={handleSubmit(onSubmit)}>
                 <p className="form-title">{formTitle}</p>
+
+                {location.pathname == "/registration" && <div className="block-label-inp">
+                    <label>Имя</label>
+                    <input type="text" {...register("name")} />
+                    {errors.name && <ErrorMessage errorMessage={errors.name.message} />}
+                </div>}
+
+
                 <div className="block-label-inp">
                     <label>Логин</label>
                     <input type="text" {...register("login")} />
@@ -57,7 +49,7 @@ const AuthRegisterContainer = ({ className, formTitle, btnTitle, pageToOtherForm
                 </div>
 
                 <div className="block-action">
-                    <button>{btnTitle}</button>
+                    <button type="submit">{btnTitle}</button>
                     <p onClick={() => navigate(`/${pageToOtherForm}`)} className="link-redirect">{linkTitle}</p>
                 </div>
             </form>

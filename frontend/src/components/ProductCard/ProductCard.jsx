@@ -18,9 +18,8 @@ const ProductCardContainer = ({ className, product }) => {
     const handleClickProduct = () => {
         // dispatch(actionProduct(product))
         navigate(`/product/${category.title}/${_id}`)
-
         // mokiCreateCategory()
-        mokiCreateProduct()
+        // mokiCreateProduct()
     }
 
     return (

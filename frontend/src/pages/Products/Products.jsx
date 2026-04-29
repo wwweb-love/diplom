@@ -12,7 +12,6 @@ const ProductsContainer = ({ className }) => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const [isLoadingProducts, setIsLoadingProducts] = useState(true)
-    const globalError = useSelector(selectorGlobalError)
 
     useEffect(() => {
         setIsLoadingProducts(true)
@@ -24,10 +23,11 @@ const ProductsContainer = ({ className }) => {
             if (error) {
                 dispatch(actionGlobalError(error))
                 navigate("/errors")
+            } else {
+                dispatch(actionProducts(data))
+                setIsLoadingProducts(false)
             }
 
-            dispatch(actionProducts(data))
-            setIsLoadingProducts(false)
         })
     }, [])
 
@@ -35,7 +35,6 @@ const ProductsContainer = ({ className }) => {
 
     return (
         <div className={className}>
-            {!globalError && <>
                 <Search />
                 <div className="block-category-products">
                     <SectionCategory />
@@ -46,8 +45,6 @@ const ProductsContainer = ({ className }) => {
                         </div>}
                     </div>
                 </div>
-            </>}
-
         </div>
     )
 }

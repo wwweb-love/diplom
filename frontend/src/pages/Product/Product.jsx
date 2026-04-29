@@ -4,18 +4,29 @@ import { useDispatch, useSelector } from "react-redux"
 import { selectorProduct } from "../../selectors"
 import { useEffect, useState } from "react"
 import { getProduct } from "../../api"
-import { useParams } from "react-router"
-import { actionProduct } from "../../actions"
+import { useParams, useNavigate } from "react-router"
+import { actionProduct, actionGlobalError } from "../../actions"
 
 const ProductContainer = ({ className }) => {
+    const navigate = useNavigate()
     const params = useParams()
     const dispatch = useDispatch()
     const [isLoadingProduct, setIsLoadingProduct] = useState(true)
     useEffect(() => {
+
         setIsLoadingProduct(true)
         getProduct(params.category, params.id).then(loaded => {
-            dispatch(actionProduct(loaded))
-            setIsLoadingProduct(false)
+
+            const { data, error } = loaded
+
+            if (error) {
+                dispatch(actionGlobalError(error))
+                navigate("/errors")
+            } else {
+                dispatch(actionProduct(data))
+                setIsLoadingProduct(false)
+            }
+
         })
 
     }, [])

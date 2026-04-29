@@ -3,9 +3,10 @@ import styled from "styled-components"
 import { selectorGlobalError } from "../../selectors"
 import SadErrorsSVG from "../../assets/svg/sad-errors.svg?react"
 import { ErrorMessage } from "../../components"
+import { useNavigate } from "react-router"
 
 const ErrorPageContainer = ({ className }) => {
-
+    const navigate = useNavigate()
     const globalError = useSelector(selectorGlobalError)
 
     return (
@@ -15,6 +16,7 @@ const ErrorPageContainer = ({ className }) => {
                 <h2>Ошибка</h2>
                 <p>Проблемы на сервере. <span className="underline">Повторите попытку позже</span></p>
                 <p>Сообщение от сервера: <ErrorMessage errorMessage={globalError} /></p>
+                <button onClick={() => navigate("/")}>Перейти на главную страницу</button>
             </div>
         </div>
     )
@@ -45,6 +47,19 @@ export const ErrorPage = styled(ErrorPageContainer)`
 
     .underline {
         text-decoration: underline;
+    }
+
+    button {
+        display: flex;
+        align-self: start;
+        justify-self: start;
+        padding: 10px 15px;
+        font-size: 16px;
+        background-color: #005bff;
+        color: #fff;
+        border: 0;
+        border-radius: 15px;
+        cursor: pointer;
     }
         
 `
