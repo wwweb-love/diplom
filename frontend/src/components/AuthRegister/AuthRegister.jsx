@@ -4,10 +4,11 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
 import { useNavigate, useLocation } from "react-router"
 import { ErrorMessage } from "../ErrorMessage/ErrorMessage"
-import { postAuth, postRegistr } from "../../api"
-import { useDispatch } from "react-redux"
-import { actionGlobalError, actionUser } from "../../actions"
+import { getBasket, postAuth, postRegistr } from "../../api"
+import { useDispatch, useSelector } from "react-redux"
+import { actionBasket, actionGlobalError, actionUser } from "../../actions"
 import { useState } from "react"
+import { selectorUser } from "../../selectors"
 
 
 const AuthRegisterContainer = ({ className, htmlInfo, formHook }) => {
@@ -15,7 +16,6 @@ const AuthRegisterContainer = ({ className, htmlInfo, formHook }) => {
     const location = useLocation();
     const dispatch = useDispatch()
     const [isLoading, setIsLoading] = useState(false)
-
     const { formTitle, btnTitle, pageToOtherForm, linkTitle } = htmlInfo
 
     const {
@@ -25,9 +25,12 @@ const AuthRegisterContainer = ({ className, htmlInfo, formHook }) => {
     } = formHook
 
     const onSubmit = async (data) => {
+
         setIsLoading(true)
+        let user = ""
+
         if (location.pathname == "/registration") {
-            await postRegistr(data).then(loaded => {
+            await postRegistr(data).then(async (loaded) => {
                 const { error, data } = loaded
                 if (error) {
                     dispatch(actionGlobalError(error))
@@ -35,13 +38,27 @@ const AuthRegisterContainer = ({ className, htmlInfo, formHook }) => {
                     navigate("/errors")
                 } else {
                     dispatch(actionUser(data))
+                    localStorage.setItem("user", JSON.stringify(data));
+
+                    await getBasket(data._id).then(loaded => {
+                        const { error, data } = loaded
+                        setIsLoading(true)
+                        if (error) {
+                            dispatch(actionGlobalError(error))
+                            setIsLoading(false)
+                            navigate("/errors")
+                        } else {
+                            dispatch(actionBasket(data))
+                            setIsLoading(false)
+                        }
+                    })
+
                     setIsLoading(false)
-                    sessionStorage.setItem("user", JSON.stringify(data))
                     navigate('/')
                 }
             })
         } else {
-            await postAuth(data).then(loaded => {
+            await postAuth(data).then(async (loaded) => {
                 const { error, data } = loaded
                 if (error) {
                     dispatch(actionGlobalError(error))
@@ -49,12 +66,29 @@ const AuthRegisterContainer = ({ className, htmlInfo, formHook }) => {
                     navigate("/errors")
                 } else {
                     dispatch(actionUser(data))
-                    sessionStorage.setItem("user", JSON.stringify(data))
+                    localStorage.setItem("user", JSON.stringify(data));
+
+                    await getBasket(data._id).then(loaded => {
+                        const { error, data } = loaded
+                        setIsLoading(true)
+                        if (error) {
+                            dispatch(actionGlobalError(error))
+                            setIsLoading(false)
+                            navigate("/errors")
+                        } else {
+                            dispatch(actionBasket(data))
+                            setIsLoading(false)
+                        }
+                    })
+
                     setIsLoading(false)
-                    navigate("/") 
+                    navigate("/")
                 }
             })
         }
+
+
+
 
     }
 

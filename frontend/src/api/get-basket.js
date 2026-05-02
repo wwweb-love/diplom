@@ -1,3 +1,3 @@
-export const getBasket = () => (
-    fetch("http://localhost:3000/api/basket/1").then(loaded => loaded.json())
+export const getBasket = (userId) => (
+    fetch(`http://localhost:3000/api/basket/${userId}`).then(loaded => loaded.json())
 )

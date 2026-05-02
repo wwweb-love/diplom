@@ -2,6 +2,7 @@ const initialStateProduct = {
     listProducts: [],
     listCategories: [],
     selectedProduct: {},
+    statusProductOnBasket: false,
     basket: {},
     globalError: "",
     user: null

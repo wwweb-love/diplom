@@ -1,46 +1,69 @@
 import styled from "styled-components"
 import { Loader, Search, SectionPathToProduct } from "../../components"
 import { useDispatch, useSelector } from "react-redux"
-import { selectorProduct } from "../../selectors"
+import { selectorBasket, selectorProduct, selectorProducts, selectorUser } from "../../selectors"
 import { useEffect, useState } from "react"
-import { getProduct } from "../../api"
+import { getProduct, postProductOnBasket, deleteProductOnBasket, getBasket } from "../../api"
 import { useParams, useNavigate } from "react-router"
-import { actionProduct, actionGlobalError } from "../../actions"
+import { actionProduct, actionGlobalError, actionBasket } from "../../actions"
+import { useFetchData } from "../../hooks"
 
 const ProductContainer = ({ className }) => {
     const navigate = useNavigate()
-    const params = useParams()
     const dispatch = useDispatch()
-    const [isLoadingProduct, setIsLoadingProduct] = useState(true)
-    useEffect(() => {
 
-        setIsLoadingProduct(true)
-        getProduct(params.category, params.id).then(loaded => {
-
-            const { data, error } = loaded
-
-            if (error) {
-                dispatch(actionGlobalError(error))
-                navigate("/errors")
-            } else {
-                dispatch(actionProduct(data))
-                setIsLoadingProduct(false)
-            }
-
-        })
-
-    }, [])
-
+    const { id } = useParams()
+    const user = useSelector(selectorUser)
+    const basket = useSelector(selectorBasket)
     const product = useSelector(selectorProduct)
+    const products = useSelector(selectorProducts)
+    const { fetchData, fetchMultiplyData, isLoading } = useFetchData()
 
-    const { _id, title, price, image_url, count, discount, category, createdAt } = product
+    console.log("page Product", {
+        id,
+        user,
+        basket,
+        product,
+        products,
+        isLoading
+    })
 
+    useEffect(() => {
+        if (user && !Object.keys(product).length || (user && !Object.keys(basket).length)) {
+            // fetchData(getProduct, actionGlobalError, actionProduct, [id])
+            fetchMultiplyData([getProduct, getBasket], actionGlobalError, [actionProduct, actionBasket], [[id], [user._id]])
+        }
+    }, [user, basket])
+
+    const { _id, category, image_url, title, count, price } = product
+
+    const handleClickAddProductOnBasket = () => {
+        if (!user) {
+            navigate("/login")
+        } else {
+            fetchData(postProductOnBasket, actionGlobalError, actionBasket, [user._id, product._id])
+
+            const newBasket = basket
+            newBasket.products.push({ productId: product, selected_count: 1 })
+            dispatch(actionBasket(newBasket))
+        }
+    }
+
+    const handleClickDeleteProductOnBasket = () => {
+        if (!user) {
+            navigate("/login")
+        } else {
+            fetchData(deleteProductOnBasket, actionGlobalError, actionBasket, [user._id, product._id])
+            const newBasket = basket
+            dispatch(actionBasket(newBasket))
+        }
+    }
 
     return (
         <div className={className}>
-            {isLoadingProduct ? <Loader /> : <>
+            {isLoading || !Object.keys(product).length || !Object.keys(basket).length ? <Loader /> : <>
                 <Search />
-                <SectionPathToProduct />
+                <SectionPathToProduct _id={_id} category={category.title} />
                 <div className="product">
                     <div className="block-image-info">
                         <img className="image" src={image_url} alt="" />
@@ -53,7 +76,9 @@ const ProductContainer = ({ className }) => {
                         </div>
                     </div>
                     <div className="block-btn-id">
-                        <button className="btn-buy-product">Купить</button>
+                        {basket.products.some(product => product.productId._id == _id)
+                            ? <button onClick={handleClickDeleteProductOnBasket} className="btn-unbuy-product">Удалить товар с корзины</button>
+                            : <button onClick={handleClickAddProductOnBasket} className="btn-buy-product">Добавить в корзину</button>}
                         <p className="id-product">{_id}</p>
                     </div>
                 </div>
@@ -115,6 +140,20 @@ export const Product = styled(ProductContainer)`
     }
 
     .btn-buy-product:hover {
+        opacity: 0.5;
+    }
+
+    .btn-unbuy-product {
+        padding: 10px 15px;
+        font-size: 16px;
+        background-color: #ffffff;
+        color: black;
+        border: 1px solid #005bff;
+        border-radius: 15px;
+        cursor: pointer;
+    }
+
+    .btn-unbuy-product:hover {
         opacity: 0.5;
     }
 

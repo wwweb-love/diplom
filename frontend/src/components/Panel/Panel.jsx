@@ -27,7 +27,7 @@ const PanelContainer = ({ className }) => {
                 navigate("/errors")
             } else {
                 dispatch(actionUser(null))
-                sessionStorage.setItem("user", JSON.stringify(null))
+                localStorage.removeItem("user");
             }
             
             setIsLoading(false)

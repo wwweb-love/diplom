@@ -7,44 +7,38 @@ import { actionGlobalError, actionProducts } from "../../actions"
 import { selectorGlobalError, selectorProducts } from "../../selectors"
 import { Loader } from "../../components"
 import { useNavigate } from "react-router"
+import { useFetchData } from "../../hooks"
 
 const ProductsContainer = ({ className }) => {
-    const navigate = useNavigate()
-    const dispatch = useDispatch()
-    const [isLoadingProducts, setIsLoadingProducts] = useState(true)
-    
+    const products = useSelector(selectorProducts)
+    const { fetchData, isLoading } = useFetchData()
+
+    console.log("page ProductS", {
+        products,
+        isLoading
+    })
+
     useEffect(() => {
-        setIsLoadingProducts(true)
-
-        getProducts().then((loaded) => {
-
-            const { data, error } = loaded
-
-            if (error) {
-                dispatch(actionGlobalError(error))
-                navigate("/errors")
-            } else {
-                dispatch(actionProducts(data))
-                setIsLoadingProducts(false)
-            }
-
-        })
+        if (!products.length) {
+            fetchData(getProducts, actionGlobalError, actionProducts)
+        }
     }, [])
 
-    const products = useSelector(selectorProducts)
 
     return (
         <div className={className}>
+            {isLoading || !Object.keys(products).length ? <Loader /> : <>
                 <Search />
                 <div className="block-category-products">
                     <SectionCategory />
                     <div className="block-sorted-products">
                         <SectionSorted />
-                        {isLoadingProducts ? <Loader /> : <div className="block-products">
+                        <div className="block-products">
                             {products.map(product => <ProductCard key={product._id} product={product} />)}
-                        </div>}
+                        </div>
                     </div>
                 </div>
+            </>}
         </div>
     )
 }

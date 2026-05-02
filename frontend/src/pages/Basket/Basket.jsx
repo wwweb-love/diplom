@@ -1,48 +1,44 @@
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import styled from "styled-components"
 import { getBasket } from "../../api"
 import { Loader, BasketCard, BasketInfo } from "../../components"
 import { useDispatch, useSelector } from "react-redux"
 import { actionBasket, actionGlobalError } from "../../actions"
-import { selectorBasket } from "../../selectors"
+import { selectorBasket, selectorUser } from "../../selectors"
 import { product } from "../../reducers"
 import { useNavigate } from "react-router"
+import { useFetchData } from "../../hooks"
 
 const BasketContainer = ({ className }) => {
     const navigate = useNavigate()
-    const [isLoadingBasket, setIsLoadingBasket] = useState(true)
     const dispatch = useDispatch()
+    const user = useSelector(selectorUser)
+    const basket = useSelector(selectorBasket)
+
+    const { fetchData, isLoading } = useFetchData()
+
+    console.log("page Baskets", {
+        user,
+        basket,
+        isLoading
+    })
 
     useEffect(() => {
-        setIsLoadingBasket(true)
-        const basket = getBasket().then(loaded => {
-
-            const { data, error } = loaded
-            
-            if (error) {
-                dispatch(actionGlobalError(error))
-                navigate("/errors")
-            } else {
-                dispatch(actionBasket(data))
-                setIsLoadingBasket(false)
-            }
-        })
-    }, [])
-
-    const basket = useSelector(selectorBasket)
+        if (!Object.keys(basket).length && user) {
+            fetchData(getBasket, actionGlobalError, actionBasket, [user._id])
+        }
+    }, [user])
 
     return (
         <div className={className}>
             <h2>Корзина</h2>
-            {isLoadingBasket ? <Loader /> : <div className="block-products-info">
+            {isLoading || !Object.keys(basket).length ? <Loader /> : <div className="block-products-info">
                 <div className="products">
-                    {basket.products.map(product => <BasketCard key={product._id} product={product} />)}
+                    {basket.products.map(product => <BasketCard key={product.productId._id} product={product} />)}
                 </div>
 
                 <BasketInfo products={basket.products} />
             </div>}
-
-
         </div>
     )
 }

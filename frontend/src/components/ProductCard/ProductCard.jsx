@@ -10,16 +10,14 @@ import { mokiCreateCategory, mokiCreateProduct } from "../../api/moki"
 
 const ProductCardContainer = ({ className, product }) => {
 
-    const { _id, title, price, image_url, count, discount, category, createdAt } = product
+    const { _id, title, price, image_url } = product
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
     const handleClickProduct = () => {
-        // dispatch(actionProduct(product))
-        navigate(`/product/${category.title}/${_id}`)
-        // mokiCreateCategory()
-        // mokiCreateProduct()
+        dispatch(actionProduct(product))
+        navigate(`/product/${_id}`)
     }
 
     return (

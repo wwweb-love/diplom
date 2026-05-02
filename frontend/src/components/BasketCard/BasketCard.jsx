@@ -5,9 +5,8 @@ import MinusSVG from "../../assets/svg/minus.svg?react"
 import DeleteSVG from "../../assets/svg/delete.svg?react"
 
 const BasketCardContainer = ({ className, product }) => {
-
-    const { _id, title, price, image_url, count, discount, category, createdAt } = product
-
+    const { _id, title, price, image_url, count, discount, category, createdAt } = product.productId
+    
     return (
         <div className={className}>
             <img className="image" src={image_url} alt="" />
@@ -16,8 +15,9 @@ const BasketCardContainer = ({ className, product }) => {
                 <p className="id">id товара: {_id}</p>
                 <div className="block-info">
                     <p className="title">{title}</p>
-                    <p className="count">Количество:<PlusSVG />{count}<MinusSVG /></p>
-                    <p className="price">Стоимость: {price}</p>
+                    <p className="count">На складе: {count}</p>
+                    <p className="count">Выбрали:<PlusSVG />{product.selected_count}<MinusSVG /></p>
+                    <p className="price">Стоимость: {price * product.selected_count}</p>
                 </div>
             </div>
             
@@ -27,7 +27,7 @@ const BasketCardContainer = ({ className, product }) => {
 }
 
 export const BasketCard = styled(BasketCardContainer)`
-    width: 800px;
+    width: 1000px;
     display: flex;
     justify-content: space-between;
     background-color: #fff;
@@ -41,7 +41,7 @@ export const BasketCard = styled(BasketCardContainer)`
     }
 
     .block-info-wrapper {
-        width: 500px;
+        width: 700px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -55,6 +55,7 @@ export const BasketCard = styled(BasketCardContainer)`
     }
 
     .title {
+        width: 250px;
         font-size: 18px;
         font-weight: 600;
     }
