@@ -10,28 +10,20 @@ import { useDispatch, useSelector } from "react-redux"
 import { actionGlobalError, actionUser } from "../../actions"
 import { useState } from "react"
 import { selectorUser } from "../../selectors"
+import { useFetchData } from "../../hooks"
 
 const PanelContainer = ({ className }) => {
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const user = useSelector(selectorUser)
-    const [isLoading, setIsLoading] = useState(false)
+
+    const user = useSelector(selectorUser) || localStorage.getItem("user")
+
+    const { fetchData, isLoading } = useFetchData()
 
     const hadleClickLogout = () => {
-        setIsLoading(true)
-        postLogout().then(loaded => {
-            const { error, data } = loaded
-            if (error) {
-                dispatch(actionGlobalError(error))
-                navigate("/errors")
-            } else {
-                dispatch(actionUser(null))
-                localStorage.removeItem("user");
-            }
-            
-            setIsLoading(false)
-        })
+        fetchData(postLogout, actionGlobalError, actionUser)
+        localStorage.removeItem("user");
     }
 
     return (
@@ -48,7 +40,7 @@ const PanelContainer = ({ className }) => {
                 }
 
 
-                <ButtonPanel onClick={() => navigate("/basket/123")} icon={<BasketSVG />}>Корзина</ButtonPanel> {/* edit 123 - userId */}
+                <ButtonPanel onClick={() => navigate("/basket")} icon={<BasketSVG />}>Корзина</ButtonPanel> {/* edit 123 - userId */}
             </>}
 
         </div>

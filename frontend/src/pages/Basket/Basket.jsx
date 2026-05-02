@@ -12,7 +12,7 @@ import { useFetchData } from "../../hooks"
 const BasketContainer = ({ className }) => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const user = useSelector(selectorUser)
+    const user = useSelector(selectorUser) || localStorage.getItem("user")
     const basket = useSelector(selectorBasket)
 
     const { fetchData, isLoading } = useFetchData()
@@ -24,8 +24,12 @@ const BasketContainer = ({ className }) => {
     })
 
     useEffect(() => {
-        if (!Object.keys(basket).length && user) {
-            fetchData(getBasket, actionGlobalError, actionBasket, [user._id])
+        if (user) {
+            if (!Object.keys(basket).length) {
+                fetchData(getBasket, actionGlobalError, actionBasket, [user._id])
+            }
+        } else {
+            navigate("/login")
         }
     }, [user])
 

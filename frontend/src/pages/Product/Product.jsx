@@ -13,7 +13,7 @@ const ProductContainer = ({ className }) => {
     const dispatch = useDispatch()
 
     const { id } = useParams()
-    const user = useSelector(selectorUser)
+    const user = useSelector(selectorUser) || localStorage.getItem('user');
     const basket = useSelector(selectorBasket)
     const product = useSelector(selectorProduct)
     const products = useSelector(selectorProducts)
@@ -29,10 +29,16 @@ const ProductContainer = ({ className }) => {
     })
 
     useEffect(() => {
-        if (user && !Object.keys(product).length || (user && !Object.keys(basket).length)) {
-            // fetchData(getProduct, actionGlobalError, actionProduct, [id])
-            fetchMultiplyData([getProduct, getBasket], actionGlobalError, [actionProduct, actionBasket], [[id], [user._id]])
+
+        if (user) {
+            if (!Object.keys(product).length || !Object.keys(basket).length) {
+                // fetchData(getProduct, actionGlobalError, actionProduct, [id])
+                fetchMultiplyData([getProduct, getBasket], actionGlobalError, [actionProduct, actionBasket], [[id], [user._id]])
+            }
+        } else {
+            navigate("/login")
         }
+
     }, [user, basket])
 
     const { _id, category, image_url, title, count, price } = product
