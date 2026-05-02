@@ -1,4 +1,5 @@
 const User = require("../models/User")
+const Basket = require("../models/Basket")
 const bcrypt = require("bcrypt")
 const { generate } = require("../helpers/token")
 
@@ -13,6 +14,11 @@ const register = async (req, res) => {
 
     const token = generate({id: user.id})
 
+    const isBasket = await Basket.findOne({ user: user.id })
+    if (!isBasket) {
+        const basket = await Basket.create({ user: user.id, products: [] })
+    }
+    
     return {user, token}
 }
 
@@ -28,6 +34,11 @@ const login = async (req, res) => {
     if (!isPasswordMatch) throw new Error("Password invalid")
 
     const token = generate({id: user.id})
+
+    const isBasket = await Basket.findOne({ user: user.id })
+    if (!isBasket) {
+        const basket = await Basket.create({ user: user.id, products: [] })
+    }
 
     return { token, user }
 }

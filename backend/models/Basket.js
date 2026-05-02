@@ -4,12 +4,23 @@ const BasketSchema = mongoose.Schema(
     {
         user: {
             type: String,
-            required: true
+            required: true,
+            unique: true,
+            index: true
         },
         products: [
             {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Product"
+                productId: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "Product",
+                    required: true
+                },
+                selected_count: {
+                    type: Number,
+                    required: true,
+                    min: 1,
+                    default: 1
+                }
             }
         ]
     }
