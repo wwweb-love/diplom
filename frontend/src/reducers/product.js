@@ -1,11 +1,13 @@
 const initialStateProduct = {
     listProducts: [],
     listCategories: [],
+    selectedCategory: "all",
     selectedProduct: {},
     statusProductOnBasket: false,
     basket: {},
     globalError: "",
-    user: null
+    user: null,
+    
 }
 
 export const product = (state = initialStateProduct, action) => {
@@ -50,6 +52,13 @@ export const product = (state = initialStateProduct, action) => {
             return {
                 ...state,
                 user: action.payload
+            }
+        }
+
+        case "SET_SELECTED_CATEGORY": {
+            return {
+                ...state,
+                selectedCategory: action.payload
             }
         }
 

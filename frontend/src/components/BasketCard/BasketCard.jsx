@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { selectorBasket, selectorUser } from "../../selectors"
 import { actionBasket, actionGlobalError } from "../../actions"
 import { useFetchData } from "../../hooks"
-import { postBasket, deleteProductOnBasket } from "../../api"
+import { postBasket, deleteProductOnBasket, putSelectedCountProductOnBasket } from "../../api"
 
 const BasketCardContainer = ({ className, product }) => {
     const { _id, title, price, image_url, count, discount, category, createdAt } = product.product
@@ -23,30 +23,12 @@ const BasketCardContainer = ({ className, product }) => {
         isLoading
     })
 
-    const handleClickPlusCountProductOnBasket = () => {
-        const newBasket = JSON.parse(JSON.stringify(basket))
-
-        const productItem = newBasket.products.find(item => item.product._id === _id)
-
-        if (productItem) {
-            productItem.selected_count += 1
-        }
-
-        console.log("basket send", newBasket)
-        dispatch(actionBasket(newBasket))
-        fetchData(postBasket, actionGlobalError, actionBasket, [newBasket, user._id])
+    const handleClickPlusCountProductOnBasket = (product) => {
+        fetchData(putSelectedCountProductOnBasket, actionGlobalError, actionBasket, [user._id, _id, product.selected_count + 1])
     }   
 
     const handleClickMinusCountProductOnBasket = () => {
-        const newBasket = JSON.parse(JSON.stringify(basket))
-
-        const productItem = newBasket.products.find(item => item.product._id === _id)
-
-        if (productItem) {
-            productItem.selected_count -= 1
-        }
-
-        dispatch(actionBasket(newBasket))
+        fetchData(putSelectedCountProductOnBasket, actionGlobalError, actionBasket, [user._id, _id, product.selected_count - 1])
     }
 
     const handleClickDeleteProductOnBasket = () => {
@@ -65,9 +47,9 @@ const BasketCardContainer = ({ className, product }) => {
 
                     <p className="count">
                         Выбрали:
-                        <PlusSVG onClick={handleClickPlusCountProductOnBasket} />
+                        <PlusSVG onClick={() => handleClickPlusCountProductOnBasket(product)} />
                         {product.selected_count}
-                        <MinusSVG onClick={handleClickMinusCountProductOnBasket} />
+                        <MinusSVG onClick={() => handleClickMinusCountProductOnBasket(product)} />
                     </p>
 
                     <p className="price">Стоимость: {price * product.selected_count}</p>

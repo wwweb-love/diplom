@@ -4,7 +4,7 @@ import { getProducts } from "../../api"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { actionGlobalError, actionProducts } from "../../actions"
-import { selectorGlobalError, selectorProducts } from "../../selectors"
+import { selectorGlobalError, selectorProducts, selectorSelectedCategory } from "../../selectors"
 import { Loader } from "../../components"
 import { useNavigate } from "react-router"
 import { useFetchData } from "../../hooks"
@@ -22,6 +22,7 @@ const ProductsContainer = ({ className }) => {
         if (!products.length) {
             fetchData(getProducts, actionGlobalError, actionProducts)
         }
+        console.log("useEff")
     }, [])
 
 

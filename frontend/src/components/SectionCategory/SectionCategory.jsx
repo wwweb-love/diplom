@@ -27,7 +27,7 @@ const SectionCategoryContainer = ({ className }) => {
         <div className={className}>
             <h2>Категории</h2>
             {isLoading || !Object.keys(categories).length ? <Loader /> : <div className="block-categories">
-                {categories.map(category => <CategoryCard key={category._id} title={category.name} />)}
+                {categories.map(category => <CategoryCard key={category._id} category={category} />)}
             </div>}
         </div>
     )

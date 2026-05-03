@@ -38,7 +38,7 @@ const BasketContainer = ({ className }) => {
             <h2>Корзина</h2>
             {isLoading || !Object.keys(basket).length ? <Loader /> : <div className="block-products-info">
                 <div className="products">
-                    {basket.products.map(product => <BasketCard key={product.product._id} product={product} />)}
+                    {basket.products.map(product => <BasketCard key={product._id} product={product} />)}
                     {!basket.products.length && <h3>Пусто. Добавьте товары</h3>}
                 </div>
 
