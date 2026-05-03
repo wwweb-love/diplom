@@ -3,11 +3,12 @@ const mongoose = require("mongoose")
 const path = require('path')
 const cors = require('cors')
 const cookieParser = require("cookie-parser")
+// const routes = require('./routes')
 
 
 const { register, login } = require("./controllers/User")
 const { getProducts, getProduct, addProduct } = require("./controllers/Product")
-const { getBasket, addProductOnBasket, deleteProductOnBasket } = require("./controllers/Basket")
+const { getBasket, addProductOnBasket, deleteProductOnBasket, updateBasket } = require("./controllers/Basket")
 const { getCategories } = require("./controllers/Category")
 const { transformerProducts } = require("./transformers/transformer-products")
 const { transformerProduct } = require("./transformers/transformer-product")
@@ -23,15 +24,16 @@ server.use(cors({
 server.use(cookieParser())
 server.use(express.json())
 
+// app.use('/', routes)
 
 server.post("/register", async (req, res) => {
     try {
         const { token, user } = await register(req, res)
-        
+
         res.cookie("token", token, { httpOnly: true })
-        .send({error: null, data: user})
-    } catch(e) {
-        res.send({error: e.message, data: null})
+            .send({ error: null, data: user })
+    } catch (e) {
+        res.send({ error: e.message, data: null })
     }
 })
 
@@ -42,10 +44,10 @@ server.post("/login", async (req, res) => {
         console.log(user)
 
         res.cookie("token", token, { httpOnly: true })
-            .send({error: null, data: user})
+            .send({ error: null, data: user })
 
-    } catch(e) {
-        res.send({error: e.message, data: null})
+    } catch (e) {
+        res.send({ error: e.message, data: null })
     }
 })
 
@@ -53,94 +55,109 @@ server.post("/login", async (req, res) => {
 server.post("/logout", (req, res) => {
     try {
         res.cookie("token", "", { httpOnly: true })
-        .send({error: null, data: null})
+            .send({ error: null, data: null })
     } catch (e) {
-        res.send({error: e.message, data: null})
+        res.send({ error: e.message, data: null })
     }
 })
+
+// page Products
 
 server.get("/products", async (req, res) => {
     try {
 
-        const products = await getProducts(req, res)
-    
+        const products = await getProducts()
+
         res.send({ error: null, data: products })
 
-    } catch(e) {
+    } catch (e) {
         res.send({ error: e.message || "Unknown error", data: null })
     }
 })
 
-
-server.get("/product/:id", async (req, res) => {
-    try{
-
-        const product = await getProduct(req, res)
-        res.send({ error: null, data: product })
-
-    } catch(e) {
-        res.send({ error: e.message || "Unknown error", data: null  })
-    }
-})
-
-server.post("/product", async (req, res) => {
-    try{
-        
-        const product = await addProduct(req, res)
-        
-        res.send({ error: null, data: product })
-
-    } catch(e) {
-        res.send({ error: e.message || "Unknown error", data: null  })
-    }
-})
-
 server.get("/categories", async (req, res) => {
-    try{
+    try {
+        const categories = await getCategories()
 
-        const categories = await getCategories(req, res)
-        
         res.send({ error: null, data: categories })
 
-    } catch(e) {
-        res.send({ error: e.message || "Unknown error", data: null  })
+    } catch (e) {
+        res.send({ error: e.message || "Unknown error", data: null })
     }
 })
 
-server.get("/api/basket/:userId", async (req, res) => {
-    console.log(req.params.userId)
-    try{
-        const basket = await getBasket(req, res)
-        
-        res.send({ error: null, data: basket })
-        
-    } catch(e) {
-        res.send({ error: e.message || "Unknown error", data: null  })
-    }
-    
-})
+// page Product
 
-server.post("/basket/:userId/product", async (req, res) => {
-    console.log("Frontend", req.body)
+server.get("/product/:id", async (req, res) => {
     try {
+        const data = req.params
+        const product = await getProduct(data)
+        res.send({ error: null, data: product })
 
-        const basket = await addProductOnBasket(req, res)
+    } catch (e) {
+        res.send({ error: e.message || "Unknown error", data: null })
+    }
+})
+
+server.get("/basket/:userId", async (req, res) => {
+    try {
+        const data = req.params
+        const basket = await getBasket(data)
+        res.send({ error: null, data: basket })
+    } catch (e) {
+        res.send({ error: e.message || "Unknown error", data: null })
+    }
+})
+
+server.post("/basket/:userId/:productId", async (req, res) => {
+    try {
+        const data = { userId: req.params.userId, productAndSelectedCount: req.body }
+        const basket = await addProductOnBasket(data)
 
         res.send({ error: null, data: basket })
-    } catch(e) {
-        res.send({ error: e, data: null })
+    } catch (e) {
+        res.send({ error: e.message || "Unknown error", data: null })
     }
 })
 
 server.delete("/basket/:userId/:productId", async (req, res) => {
     try {
-        const basket = await deleteProductOnBasket(req, res)
-        
+        const data = req.params
+        const basket = await deleteProductOnBasket(data)
+
         res.send({ error: null, data: basket })
-    } catch(e) {
-        res.send({ error: e, data: null })
+    } catch (e) {
+        res.send({ error: e.message || "Unknown error", data: null })
     }
 })
+
+// Удалиить обработку запроса ниже
+server.post("/basket/:userId", async (req, res) => {
+    try {
+        const basket = await updateBasket(req, res)
+        res.send({ error: null, data: req.body.basket })
+
+    } catch (e) {
+        res.send({ error: e.message || "Unknown error", data: null })
+    }
+})
+
+// admin Panel. Future
+
+// server.post("/product", async (req, res) => {
+//     try{
+//         const product = await addProduct(req, res)
+
+//         res.send({ error: null, data: product })
+
+//     } catch(e) {
+//         res.send({ error: e.message || "Unknown error", data: null  })
+//     }
+// })
+
+
+
+
 
 
 // try {} catch(e) {res.send({ error: e.message || "Unknown error" })}
