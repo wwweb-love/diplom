@@ -3,7 +3,6 @@ import { selectPriceToBasket, getDiscount } from "../../utils"
 import { useEffect } from "react"
 
 const BasketInfoContainer = ({ className, products }) => {
-    console.log("products", products)
     const { priceResult, priceDiscountResult } = selectPriceToBasket(products)
     const discount = getDiscount(priceResult, priceDiscountResult) 
 
@@ -16,7 +15,7 @@ const BasketInfoContainer = ({ className, products }) => {
         <div className={className}>
             <div className="basket-result">
                 <p>Итого: {priceResult}</p>
-                <p>Скидка: {discount}%</p>
+                <p>Скидка: {products.length ? discount : 0}%</p>
                 <p>Итоговая сумма: {priceDiscountResult}</p>
             </div>
 

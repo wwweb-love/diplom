@@ -5,12 +5,8 @@ export const selectPriceToBasket = (products) => {
     let priceDiscountResult = 0
     
     products.map((product) => {
-        console.log("UTILS Product", product)
-        console.log("UTILS Price", product.productId.price)
-        console.log("UTILS discount", product.productId.discount)
-
-        let price = product.productId.price
-        let discount = product.productId.discount
+        let price = product.product.price
+        let discount = product.product.discount
         let selected_count = product.selected_count
 
         priceResult += (price * selected_count)

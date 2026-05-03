@@ -15,7 +15,7 @@ export const useFetchData = () => {
 
         try {
             const { data, error } = await request(...requestArguments)
-            
+            console.log("return server fetch", data, error)
             if (error) {
                 dispatch(actionError(error));
                 navigate("/errors");

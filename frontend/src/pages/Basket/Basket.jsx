@@ -12,7 +12,7 @@ import { useFetchData } from "../../hooks"
 const BasketContainer = ({ className }) => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const user = useSelector(selectorUser) || localStorage.getItem("user")
+    const user = useSelector(selectorUser) || JSON.parse(localStorage.getItem("user"))
     const basket = useSelector(selectorBasket)
 
     const { fetchData, isLoading } = useFetchData()
@@ -31,14 +31,15 @@ const BasketContainer = ({ className }) => {
         } else {
             navigate("/login")
         }
-    }, [user])
+    }, [user, basket])
 
     return (
         <div className={className}>
             <h2>Корзина</h2>
             {isLoading || !Object.keys(basket).length ? <Loader /> : <div className="block-products-info">
                 <div className="products">
-                    {basket.products.map(product => <BasketCard key={product.productId._id} product={product} />)}
+                    {basket.products.map(product => <BasketCard key={product.product._id} product={product} />)}
+                    {!basket.products.length && <h3>Пусто. Добавьте товары</h3>}
                 </div>
 
                 <BasketInfo products={basket.products} />

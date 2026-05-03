@@ -13,7 +13,7 @@ const ProductContainer = ({ className }) => {
     const dispatch = useDispatch()
 
     const { id } = useParams()
-    const user = useSelector(selectorUser) || localStorage.getItem('user');
+    const user = useSelector(selectorUser) || JSON.parse(localStorage.getItem("user"))
     const basket = useSelector(selectorBasket)
     const product = useSelector(selectorProduct)
     const products = useSelector(selectorProducts)
@@ -48,10 +48,6 @@ const ProductContainer = ({ className }) => {
             navigate("/login")
         } else {
             fetchData(postProductOnBasket, actionGlobalError, actionBasket, [user._id, product._id])
-
-            const newBasket = basket
-            newBasket.products.push({ productId: product, selected_count: 1 })
-            dispatch(actionBasket(newBasket))
         }
     }
 
@@ -60,8 +56,6 @@ const ProductContainer = ({ className }) => {
             navigate("/login")
         } else {
             fetchData(deleteProductOnBasket, actionGlobalError, actionBasket, [user._id, product._id])
-            const newBasket = basket
-            dispatch(actionBasket(newBasket))
         }
     }
 
@@ -82,7 +76,7 @@ const ProductContainer = ({ className }) => {
                         </div>
                     </div>
                     <div className="block-btn-id">
-                        {basket.products.some(product => product.productId._id == _id)
+                        {basket.products.some(product => product.product._id == _id)
                             ? <button onClick={handleClickDeleteProductOnBasket} className="btn-unbuy-product">Удалить товар с корзины</button>
                             : <button onClick={handleClickAddProductOnBasket} className="btn-buy-product">Добавить в корзину</button>}
                         <p className="id-product">{_id}</p>
