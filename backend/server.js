@@ -8,7 +8,7 @@ const cookieParser = require("cookie-parser")
 
 const { register, login } = require("./controllers/User")
 const { getProducts, getProduct, addProduct } = require("./controllers/Product")
-const { getBasket, addProductOnBasket, deleteProductOnBasket, updateBasket } = require("./controllers/Basket")
+const { getBasket, addProductOnBasket, deleteProductOnBasket, putProductOnBasketSelectedCount } = require("./controllers/Basket")
 const { getCategories } = require("./controllers/Category")
 const { transformerProducts } = require("./transformers/transformer-products")
 const { transformerProduct } = require("./transformers/transformer-product")
@@ -65,7 +65,6 @@ server.post("/logout", (req, res) => {
 
 server.get("/products", async (req, res) => {
     try {
-
         const products = await getProducts()
 
         res.send({ error: null, data: products })
@@ -125,6 +124,18 @@ server.delete("/basket/:userId/:productId", async (req, res) => {
         const data = req.params
         const basket = await deleteProductOnBasket(data)
 
+        res.send({ error: null, data: basket })
+    } catch (e) {
+        res.send({ error: e.message || "Unknown error", data: null })
+    }
+})
+
+server.put("/basket/:userId/:productId/selected_count", async (req, res) => {
+    try {
+        const data = { userId: req.params.userId, productId: req.params.productId, selected_count: req.body.selected_count }
+        console.log("data", data)
+        const basket = await putProductOnBasketSelectedCount(data)
+        
         res.send({ error: null, data: basket })
     } catch (e) {
         res.send({ error: e.message || "Unknown error", data: null })

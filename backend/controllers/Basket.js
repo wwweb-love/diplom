@@ -2,7 +2,7 @@ const Product = require("../models/Product")
 const Category = require("../models/Category");
 const Basket = require("../models/Basket")
 const mongoose = require("mongoose")
-
+const chalk = require("chalk")
 
 const getBasket = async (data) => {
     const { userId } = data
@@ -38,10 +38,36 @@ const deleteProductOnBasket = async (data) => {
     return basket
 }
 
+const putProductOnBasketSelectedCount = async (data) => {
+    
+    const { userId, productId, selected_count } = data
+    console.log(chalk.bgGreen(userId, productId, selected_count))
+
+
+    console.log("basket", await Basket.findOne({user: userId, 'products.product': productId}))
+
+    const basketUpdate = await Basket.updateOne(
+        { 
+            user: userId,
+            'products.product': productId
+        },
+        { 
+            $set: { 'products.$.selected_count': Number(selected_count) } 
+        }
+    );
+
+    console.log("basketUpdate", basketUpdate)
+
+    const basket = await getBasket({ userId })
+    console.log("basket", basket)
+    return basket
+}
+
 
 module.exports = {
     getBasket,
     updateBasket,
     addProductOnBasket,
-    deleteProductOnBasket
+    deleteProductOnBasket,
+    putProductOnBasketSelectedCount
 };

@@ -4,13 +4,13 @@ const chalk = require("chalk")
 
 
 const getProducts = async () => {
-    const products = await Product.find().populate({path: "category" })
+    products = await Product.find().populate({ path: "category" })
     return products
 }
 
 const getProduct = async (data) => {
     const { id } = data
-    const product = await Product.findOne({ _id: id }).populate({path: "category" })
+    const product = await Product.findOne({ _id: id }).populate({ path: "category" })
     return product
 }
 
