@@ -7,6 +7,9 @@ const initialStateProduct = {
     basket: {},
     globalError: "",
     user: null,
+    adminUsersData: null,
+    adminProductsData: null,
+    adminCategoriesData: null
     
 }
 
@@ -59,6 +62,27 @@ export const product = (state = initialStateProduct, action) => {
             return {
                 ...state,
                 selectedCategory: action.payload
+            }
+        }
+
+        case "SET_ADMIN_USERS_DATA": {
+            return {
+                ...state,
+                adminUsersData: action.payload
+            }
+        }
+
+        case "SET_ADMIN_PRODUCTS_DATA": {
+            return {
+                ...state,
+                adminProductsData: action.payload
+            }
+        }
+
+        case "SET_ADMIN_CATEGORIES_DATA": {
+            return {
+                ...state,
+                adminCategoriesData: action.payload
             }
         }
 

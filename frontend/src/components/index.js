@@ -1,4 +1,3 @@
-export * from "./AdminProductCard/AdminProductCard"
 export * from "./BasketCard/BasketCard"
 export * from "./Header/Header"
 export * from "./ProductCard/ProductCard"
@@ -17,3 +16,8 @@ export * from "./Loader/Loader"
 export * from "./BasketInfo/BasketInfo"
 export * from "./AuthRegister/AuthRegister"
 export * from "./ErrorMessage/ErrorMessage"
+export * from "./AdminUsers/AdminUsers"
+export * from "./AdminProducts/AdminProducts"
+export * from "./AdminCategories/AdminCategories"
+
+export * from "./Button/Button"
