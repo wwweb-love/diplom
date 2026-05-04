@@ -43,8 +43,14 @@ const login = async (req, res) => {
     return { token, user }
 }
 
+const getUsers = async () => {
+    const users = await User.find()
+    return users
+}
+
 
 module.exports = {
     register,
-    login
+    login,
+    getUsers
 }

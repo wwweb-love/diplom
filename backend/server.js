@@ -3,15 +3,17 @@ const mongoose = require("mongoose")
 const path = require('path')
 const cors = require('cors')
 const cookieParser = require("cookie-parser")
-// const routes = require('./routes')
 
 
-const { register, login } = require("./controllers/User")
+
+const { register, login, getUsers } = require("./controllers/User")
 const { getProducts, getProduct, addProduct } = require("./controllers/Product")
 const { getBasket, addProductOnBasket, deleteProductOnBasket, putProductOnBasketSelectedCount } = require("./controllers/Basket")
 const { getCategories } = require("./controllers/Category")
 const { transformerProducts } = require("./transformers/transformer-products")
 const { transformerProduct } = require("./transformers/transformer-product")
+const authenticated = require("./middlewares/authenticated")
+const { error } = require("console")
 
 const port = 3000
 
@@ -23,8 +25,6 @@ server.use(cors({
 }));
 server.use(cookieParser())
 server.use(express.json())
-
-// app.use('/', routes)
 
 server.post("/register", async (req, res) => {
     try {
@@ -108,6 +108,8 @@ server.get("/basket/:userId", async (req, res) => {
     }
 })
 
+// page Basket
+
 server.post("/basket/:userId/:productId", async (req, res) => {
     try {
         const data = { userId: req.params.userId, productAndSelectedCount: req.body }
@@ -133,7 +135,7 @@ server.delete("/basket/:userId/:productId", async (req, res) => {
 server.put("/basket/:userId/:productId/selected_count", async (req, res) => {
     try {
         const data = { userId: req.params.userId, productId: req.params.productId, selected_count: req.body.selected_count }
-        console.log("data", data)
+
         const basket = await putProductOnBasketSelectedCount(data)
         
         res.send({ error: null, data: basket })
@@ -142,16 +144,26 @@ server.put("/basket/:userId/:productId/selected_count", async (req, res) => {
     }
 })
 
-// Удалиить обработку запроса ниже
-server.post("/basket/:userId", async (req, res) => {
-    try {
-        const basket = await updateBasket(req, res)
-        res.send({ error: null, data: req.body.basket })
+// page Admin
 
-    } catch (e) {
+server.get("/admin/:model", authenticated, async (req, res) => {
+    try {
+        const { model } = req.params
+
+        if (model == "users") {
+            res.send({error: null, data: await getUsers()})
+        } else if (model == "products") {
+            res.send({error: null, data: await getProducts()})
+        } else if (model == "categories") {
+            res.send({error: null, data: await getCategories()})
+        } else {
+            res.send({ error: "No data model", data: null })
+        }
+    } catch(e) {
         res.send({ error: e.message || "Unknown error", data: null })
     }
 })
+
 
 // admin Panel. Future
 
@@ -165,10 +177,6 @@ server.post("/basket/:userId", async (req, res) => {
 //         res.send({ error: e.message || "Unknown error", data: null  })
 //     }
 // })
-
-
-
-
 
 
 // try {} catch(e) {res.send({ error: e.message || "Unknown error" })}
